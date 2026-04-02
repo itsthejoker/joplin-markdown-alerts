@@ -1,8 +1,10 @@
 import type { SelectionRange } from '@codemirror/state';
 import type { EditorView } from '@codemirror/view';
+import type { SyntaxNode } from '@lezer/common';
 
 import { type InlineFormatDefinition } from '../../inlineFormatCommands';
 import { dispatchChangesWithSelections, type ExplicitCursorSelection } from './commandSelectionUtils';
+import { getProbePositions, getSyntaxTree } from './syntaxTreeUtils';
 
 type TextChange = {
     from: number;
@@ -140,6 +142,53 @@ export function applyInlineFormattingToFullLineSelectionText(text: string, forma
         .join('\n');
 }
 
+function isLineInsideFencedCode(view: EditorView, lineFrom: number): boolean {
+    const state = view.state;
+    const tree = getSyntaxTree(state, lineFrom);
+
+    for (const probePosition of getProbePositions(state, lineFrom)) {
+        let node: SyntaxNode | null = tree.resolveInner(probePosition, -1);
+        while (node) {
+            if (node.name.toLowerCase() === 'fencedcode') {
+                return true;
+            }
+            node = node.parent;
+        }
+
+        node = tree.resolveInner(probePosition, 1);
+        while (node) {
+            if (node.name.toLowerCase() === 'fencedcode') {
+                return true;
+            }
+            node = node.parent;
+        }
+    }
+
+    return false;
+}
+
+function applyInlineFormattingToFullLineSelectionRange(
+    view: EditorView,
+    range: SelectionRange,
+    format: InlineFormatDefinition
+): string {
+    const state = view.state;
+    const startLine = state.doc.lineAt(range.from);
+    const selectedText = state.doc.sliceString(range.from, range.to);
+    const lines = selectedText.split('\n');
+
+    return lines
+        .map((line, index) => {
+            const lineFrom = state.doc.line(startLine.number + index).from;
+            if (isLineInsideFencedCode(view, lineFrom)) {
+                return line;
+            }
+
+            return formatFullLineText(line, format);
+        })
+        .join('\n');
+}
+
 function isMultilineFullLineSelection(view: EditorView, range: SelectionRange): boolean {
     if (range.empty) {
         return false;
@@ -221,7 +270,7 @@ export function createInsertInlineFormatCommand(view: EditorView, format: Inline
 
             const selectedText = state.doc.sliceString(range.from, range.to);
             const updatedText = isMultilineFullLineSelection(view, range)
-                ? applyInlineFormattingToFullLineSelectionText(selectedText, format)
+                ? applyInlineFormattingToFullLineSelectionRange(view, range, format)
                 : applyInlineFormattingToSelectionText(selectedText, format);
 
             if (updatedText === selectedText) {

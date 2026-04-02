@@ -186,4 +186,28 @@ describe('createInsertInlineFormatCommand', () => {
             harness.destroy();
         }
     });
+
+    test('skips fenced code lines during multiline full-line formatting', () => {
+        const harness = createEditorHarness(
+            ['- one', '```ts', '- inside code', 'plain code', '```', '> - [ ] three', 'tail'].join('\n')
+        );
+
+        try {
+            const line1 = harness.view.state.doc.line(1);
+            const line7 = harness.view.state.doc.line(7);
+
+            harness.view.dispatch({
+                selection: EditorSelection.single(line1.from, line7.from),
+            });
+
+            const command = createInsertInlineFormatCommand(harness.view, getFormat('highlight'));
+            command();
+
+            expect(harness.getText()).toBe(
+                ['- ==one==', '```ts', '- inside code', 'plain code', '```', '> - [ ] ==three==', 'tail'].join('\n')
+            );
+        } finally {
+            harness.destroy();
+        }
+    });
 });
