@@ -92,7 +92,7 @@ Joplin supports various inline Markdown extensions, but the Markdown editor does
 Default shortcuts:
 
 - Highlight: `CmdOrCtrl + Shift + Y`
-- Strikethrough: `CmdOrCtrl + Shift + \``
+- Strikethrough: `CmdOrCtrl + Shift + ~`
 - Underline: `CmdOrCtrl + Shift + U`
 - Superscript: no default shortcut
 - Subscript: no default shortcut
