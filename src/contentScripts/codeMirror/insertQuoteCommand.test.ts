@@ -125,6 +125,30 @@ describe('createInsertQuoteCommand', () => {
         }
     });
 
+    test('keeps the blank-line cursor when it appears before a text selection', () => {
+        const harness = createEditorHarness(['', '', 'Selected line'].join('\n'));
+
+        try {
+            const line1 = harness.view.state.doc.line(1);
+            const line3 = harness.view.state.doc.line(3);
+
+            harness.view.dispatch({
+                selection: EditorSelection.create([
+                    EditorSelection.cursor(line1.from),
+                    EditorSelection.range(line3.from, line3.to),
+                ]),
+            });
+
+            const command = createInsertQuoteCommand(harness.view);
+            command();
+
+            expect(harness.getText()).toBe(['> ', '', '> Selected line'].join('\n'));
+            expect(harness.view.state.selection.ranges.map((range) => range.head)).toEqual([2, 19]);
+        } finally {
+            harness.destroy();
+        }
+    });
+
     test('quotes each paragraph when multiple cursors are present', () => {
         const harness = createEditorHarness(['First line', '', 'Middle line', '', 'Last line'].join('\n'));
 

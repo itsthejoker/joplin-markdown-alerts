@@ -138,7 +138,6 @@ export function createInsertQuoteCommand(view: EditorView): () => boolean {
         const state = view.state;
         const ranges = state.selection.ranges;
         const nonEmptyRanges = ranges.filter((range) => !range.empty);
-        const emptyRanges = ranges.filter((range) => range.empty);
 
         if (nonEmptyRanges.length === 0) {
             const targetMap = new Map<string, QuoteTarget>();
@@ -211,13 +210,17 @@ export function createInsertQuoteCommand(view: EditorView): () => boolean {
             });
 
         const explicitSelectionsByIndex = new Map<number, ExplicitCursorSelection>();
-        emptyRanges.forEach((range, index) => {
+        ranges.forEach((range, index) => {
+            if (!range.empty) {
+                return;
+            }
+
             const cursorTarget = createQuoteCursorTarget(state, range.head);
             if (!targetMap.has(cursorTarget.key)) {
                 targetMap.set(cursorTarget.key, cursorTarget);
             }
             if (cursorTarget.explicitSelection) {
-                explicitSelectionsByIndex.set(nonEmptyRanges.length + index, cursorTarget.explicitSelection);
+                explicitSelectionsByIndex.set(index, cursorTarget.explicitSelection);
             }
         });
 
