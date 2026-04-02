@@ -12,7 +12,6 @@ export default function () {
 
         assets: function (): AssetsItem[] {
             let rootElement = document.documentElement;
-            let appearance = '';
             try {
                 const topWindow = window.top;
                 if (topWindow?.document?.documentElement) {
@@ -23,11 +22,13 @@ export default function () {
                 rootElement = document.documentElement;
             }
 
-            try {
-                appearance = getComputedStyle(rootElement).getPropertyValue('--joplin-appearance').trim();
-            } catch {
-                appearance = '';
-            }
+            const appearance = (() => {
+                try {
+                    return getComputedStyle(rootElement).getPropertyValue('--joplin-appearance').trim();
+                } catch {
+                    return '';
+                }
+            })();
 
             const themeAsset = appearance === 'dark' ? 'alerts-theme-dark.css' : 'alerts-theme-light.css';
 
