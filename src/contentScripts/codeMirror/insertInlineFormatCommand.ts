@@ -26,6 +26,7 @@ const BLOCKQUOTE_PREFIX_REGEX = /^(\s*(?:>\s*)*)(.*)$/;
 const HEADING_PREFIX_REGEX = /^(#{1,6}\s+)(.*)$/;
 const LIST_PREFIX_REGEX = /^((?:[-+*]|\d+[.)])\s+(?:\[(?: |x|X)\]\s+)?)(.*)$/;
 const INDENTED_CONTENT_REGEX = /^(\s+)(.*)$/;
+const LEADING_WHITESPACE_REGEX = /^([ \t]+)/;
 const TRAILING_WHITESPACE_REGEX = /([ \t]+)$/;
 
 function isIndexPartOfLongerDelimiter(text: string, index: number, longerDelimiters: string[] | undefined): boolean {
@@ -151,18 +152,17 @@ function splitStructuralLineParts(line: string): StructuralLineParts | null {
 }
 
 function wrapTextPreservingTrailingWhitespace(text: string, format: InlineFormatDefinition): string {
+    const leadingWhitespaceMatch = LEADING_WHITESPACE_REGEX.exec(text);
     const trailingWhitespaceMatch = TRAILING_WHITESPACE_REGEX.exec(text);
-    if (!trailingWhitespaceMatch) {
-        return `${format.openingDelimiter}${text}${format.closingDelimiter}`;
-    }
+    const leadingWhitespace = leadingWhitespaceMatch ? leadingWhitespaceMatch[1] : '';
+    const trailingWhitespace = trailingWhitespaceMatch ? trailingWhitespaceMatch[1] : '';
+    const content = text.slice(leadingWhitespace.length, text.length - trailingWhitespace.length);
 
-    const trailingWhitespace = trailingWhitespaceMatch[1];
-    const content = text.slice(0, text.length - trailingWhitespace.length);
     if (content.length === 0) {
         return `${format.openingDelimiter}${text}${format.closingDelimiter}`;
     }
 
-    return `${format.openingDelimiter}${content}${format.closingDelimiter}${trailingWhitespace}`;
+    return `${leadingWhitespace}${format.openingDelimiter}${content}${format.closingDelimiter}${trailingWhitespace}`;
 }
 
 export function applyInlineFormattingToSelectionText(text: string, format: InlineFormatDefinition): string {

@@ -46,6 +46,10 @@ describe('applyInlineFormattingToSelectionText', () => {
     test('keeps trailing spaces outside newly added delimiters', () => {
         expect(applyInlineFormattingToSelectionText('ABC  ', getFormat('highlight'))).toBe('==ABC==  ');
     });
+
+    test('keeps leading spaces outside newly added delimiters', () => {
+        expect(applyInlineFormattingToSelectionText('  ABC', getFormat('highlight'))).toBe('  ==ABC==');
+    });
 });
 
 describe('applyInlineFormattingToFullLineSelectionText', () => {
@@ -297,6 +301,25 @@ describe('createInsertInlineFormatCommand', () => {
                     'tail',
                 ].join('\n')
             );
+        } finally {
+            harness.destroy();
+        }
+    });
+
+    test('keeps surrounding spaces outside newly added delimiters in structural lines', () => {
+        const harness = createEditorHarness(['>   ABC  ', 'tail'].join('\n'));
+
+        try {
+            const line1 = harness.view.state.doc.line(1);
+
+            harness.view.dispatch({
+                selection: EditorSelection.single(line1.from, line1.to),
+            });
+
+            const command = createInsertInlineFormatCommand(harness.view, getFormat('highlight'));
+            command();
+
+            expect(harness.getText()).toBe(['>   ==ABC==  ', 'tail'].join('\n'));
         } finally {
             harness.destroy();
         }
