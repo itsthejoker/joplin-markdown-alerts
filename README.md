@@ -1,20 +1,34 @@
-> [!note]
-> This plugin was created entirely with AI tools
+# Markdown Alerts and Formatting Commands
 
-# Markdown Alerts and Quotes
+A Joplin plugin that adds the following functionality to the Markdown editor:
 
-A Joplin plugin that adds support for GitHub-style alerts (callouts) in the markdown editor/viewer, plus editor commands for alerts and blockquotes.
+- renders GitHub-style alerts in the Markdown viewer and Markdown editor
+- adds Markdown editor commands for alerts, blockquotes, and inline formatting (for markdown syntax that joplin's builtin formatting commands don't cover)
 
 ![example](https://github.com/user-attachments/assets/5cc62d52-9cd3-40f6-97bc-0bf2a51a83f7)
 
+> [!NOTE]
+> This plugin was created entirely with AI tools.
+
 > [!CAUTION]
-> Note that the Rich Text Editor is **not** supported. Alerts will (sort of) render in the Rich Text Editor, but editing the note in the Rich Text Editor will remove any github alert syntax.
+> The Rich Text Editor is not supported. Alerts may appear there, but editing in the Rich Text Editor will remove GitHub alert syntax.
 
-## Alert syntax
+## 1. GitHub Alert Rendering
 
-**Alerts**, also sometimes known as **callouts** or **admonitions**, are a Markdown extension based on the blockquote syntax that you can use to emphasize critical information: [Github Alerts Documentation](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#alerts)
+The plugin supports GitHub-style alert syntax:
 
-To add an alert, use a special blockquote line specifying the alert type, followed by the alert information in a standard blockquote. Five types of alerts are available:
+- Markdown viewer: alerts render as styled callouts using markdown-it-github-alerts
+- Markdown editor: alerts are decorated as styled block quotes, with a title line showing the alert type (or custom title) and svg icon based on alert type (similar to the markdown-it-github-alerts styling in the viewer)
+
+Supported alert types:
+
+- `NOTE`
+- `TIP`
+- `IMPORTANT`
+- `WARNING`
+- `CAUTION`
+
+Example:
 
 ```markdown
 > [!NOTE]
@@ -32,32 +46,112 @@ To add an alert, use a special blockquote line specifying the alert type, follow
 > [!CAUTION]
 > Advises about risks or negative outcomes of certain actions.
 
-> [!NOTE] Alert with a custom title
+> [!NOTE] Custom title
 > This alert uses a custom title
 ```
 
-## Markdown Editor
+### 2. Markdown Editor Commands For Block Structures
 
-### Insert or Toggle alert
+The plugin adds toolbar buttons and Edit menu commands for:
 
-A command to quickly create an alert (or toggle alert types) is provided via an icon on the editing toolbar, keyboard shortcut (`Ctrl + Shift + A` by default), and an entry in the Edit menu. This command will either:
+- Insert or Toggle alert
+- Insert or Toggle blockquote
 
-- On an empty line, insert a new alert (`> [!NOTE]`) and place the cursor after the marker.
-- If the cursor is within an existing alert, toggle through the alert types (Note > Tip > Important > Warning > Caution).
-- If the cursor is inside a regular blockquote, convert it into an alert.
-- With no selection, (and cursor isn't inside an existing quote/alert), convert the current paragraph into an alert (or current line if no paragraph).
-- If you have a selection, convert the selected paragraphs/lines into an alert (and toggle types if already an alert).
+#### Insert or Toggle alert
 
-### Insert or Toggle blockquote
+Default shortcut: `Ctrl + Shift + A`
 
-A command to quickly insert or toggle blockquotes is provided via an icon on the editing toolbar, keyboard shortcut (`Ctrl + Shift + .` by default), and an entry in the Edit Menu. This command will either:
+Behavior:
 
-- On an empty line, insert `> ` and place the cursor after the marker.
-- With no selection, convert the current paragraph to a blockquote (or line if no paragraph).
-- With a selection, convert all paragraphs/lines in the selection to blockquotes (paragraph-aware).
+- On an empty line, insert `> [!NOTE] ` and place the cursor after the marker
+- If the cursor is inside an existing alert, cycle the alert type
+- If the cursor is inside a regular blockquote, convert it into an alert
+- With no selection, convert the current paragraph or line into an alert
+- With a selection, convert the selected paragraphs or lines into an alert
 
-The plugin will apply styling to block quotes containing github alert syntax. They will be similar to standard Joplin block quote styling, but with coloring based on the alert type, and the line with the alert syntax will be rendered as a title.
+#### Insert or Toggle blockquote
 
-## Markdown Viewer
+Default shortcut: `Ctrl + Shift + .`
 
-Block quotes containing github alert syntax will be rendered as github style alerts in the markdown viewer using markdown-it-github-alerts.
+Behavior:
+
+- On an empty line, insert `> ` and place the cursor after the marker
+- With no selection, convert the current paragraph or line into a blockquote
+- With a selection, convert the selected paragraphs or lines into blockquotes
+
+## Inline Formatting Commands
+
+Joplin supports various inline Markdown extensions, but the Markdown editor does not provide built-in commands for all of them. This plugin adds commands, toolbar buttons, and Edit menu entries for:
+
+- Highlight: `==text==`
+- Strikethrough: `~~text~~`
+- Underline: `++text++`
+- Superscript: `^text^`
+- Subscript: `~text~`
+
+Default shortcuts:
+
+- Highlight: `CmdOrCtrl + Shift + Y`
+- Strikethrough: `CmdOrCtrl + Shift + ~`
+- Underline: `CmdOrCtrl + Shift + U`
+- Superscript: no default shortcut
+- Subscript: no default shortcut
+
+### Command behavior:
+
+- Empty selection: insert the delimiter pair and place the cursor between them
+- Selected text already fully wrapped in the target format: remove the outer formatting
+- Selection contains one or more inner spans already using the target format: remove only that target formatting
+- Selection contains no target formatting: wrap the selection
+
+For full-line selections, the inline formatting commands are line-aware instead of blindly wrapping the whole block:
+
+- blank lines are preserved
+- list markers are preserved
+- blockquote markers are preserved
+- heading markers are preserved
+- task list markers are preserved
+- fenced code blocks are left alone
+- leading and trailing spaces stay outside newly inserted delimiters
+
+Examples:
+
+```markdown
+> - abc test
+```
+
+Highlight becomes:
+
+```markdown
+> - ==abc test==
+```
+
+```markdown
+## Heading
+```
+
+Highlight becomes:
+
+```markdown
+## ==Heading==
+```
+
+## Settings
+
+The plugin includes settings to enable or disable each editor toolbar button independently.
+
+Available toolbar visibility settings:
+
+- Alert
+- Blockquote
+- Highlight
+- Strikethrough
+- Underline
+- Superscript
+- Subscript
+
+All toolbar buttons are enabled by default.
+
+These settings only affect the editor toolbar buttons. The commands themselves, menu items, and shortcuts still remain available.
+
+Changing a toolbar visibility setting currently requires restarting the plugin to take effect.
