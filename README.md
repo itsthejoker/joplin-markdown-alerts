@@ -97,27 +97,7 @@ Default shortcuts:
 - Superscript: no default shortcut
 - Subscript: no default shortcut
 
-## Settings
-
-The plugin includes settings to enable or disable each editor toolbar button independently.
-
-Available toolbar visibility settings:
-
-- Alert
-- Blockquote
-- Highlight
-- Strikethrough
-- Underline
-- Superscript
-- Subscript
-
-All toolbar buttons are enabled by default.
-
-These settings only affect the editor toolbar buttons. The commands themselves, menu items, and shortcuts still remain available.
-
-Changing a toolbar visibility setting currently requires restarting the plugin to take effect.
-
-Command behavior:
+### Command behavior:
 
 - Empty selection: insert the delimiter pair and place the cursor between them
 - Selected text already fully wrapped in the target format: remove the outer formatting
@@ -155,3 +135,23 @@ Highlight becomes:
 ```markdown
 ## ==Heading==
 ```
+
+## Settings
+
+The plugin includes settings to enable or disable each editor toolbar button independently.
+
+Available toolbar visibility settings:
+
+- Alert
+- Blockquote
+- Highlight
+- Strikethrough
+- Underline
+- Superscript
+- Subscript
+
+All toolbar buttons are enabled by default.
+
+These settings only affect the editor toolbar buttons. The commands themselves, menu items, and shortcuts still remain available.
+
+Changing a toolbar visibility setting currently requires restarting the plugin to take effect.
