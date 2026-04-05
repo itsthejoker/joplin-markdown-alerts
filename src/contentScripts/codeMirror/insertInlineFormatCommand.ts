@@ -31,6 +31,7 @@ const TRAILING_WHITESPACE_REGEX = /([ \t]+)$/;
 const STRUCTURAL_PREFIX_PROBE_REGEX = /^[ \t]*(?:>\s*)*/;
 const CODE_BLOCK_NODE_NAMES = new Set(['fencedcode', 'codeblock']);
 const TABLE_NODE_NAMES = new Set(['table', 'tableheader', 'tablerow', 'tablecell', 'tabledelimiter']);
+const HORIZONTAL_RULE_NODE_NAMES = new Set(['horizontalrule']);
 
 function isIndexPartOfLongerDelimiter(text: string, index: number, longerDelimiters: string[] | undefined): boolean {
     if (!longerDelimiters || longerDelimiters.length === 0) {
@@ -243,6 +244,10 @@ function isLineInsideMarkdownTable(view: EditorView, lineFrom: number): boolean 
     return isLineInsideSyntaxNodes(view, lineFrom, TABLE_NODE_NAMES);
 }
 
+function isLineHorizontalRule(view: EditorView, lineFrom: number): boolean {
+    return isLineInsideSyntaxNodes(view, lineFrom, HORIZONTAL_RULE_NODE_NAMES);
+}
+
 function shouldSkipMarkdownTableLine(line: string, view: EditorView, lineFrom: number): boolean {
     if (!isLineInsideMarkdownTable(view, lineFrom)) {
         return false;
@@ -266,7 +271,11 @@ function applyInlineFormattingToFullLineSelectionRange(
     return lines
         .map((line, index) => {
             const lineFrom = state.doc.line(startLine.number + index).from;
-            if (isLineInsideCodeBlock(view, lineFrom) || shouldSkipMarkdownTableLine(line, view, lineFrom)) {
+            if (
+                isLineInsideCodeBlock(view, lineFrom) ||
+                shouldSkipMarkdownTableLine(line, view, lineFrom) ||
+                isLineHorizontalRule(view, lineFrom)
+            ) {
                 return line;
             }
 
@@ -328,7 +337,11 @@ function applyInlineFormattingToSelectionRange(
                 return applyInlineFormattingToSelectionText(line, format);
             }
 
-            if (isLineInsideCodeBlock(view, docLine.from) || shouldSkipMarkdownTableLine(line, view, docLine.from)) {
+            if (
+                isLineInsideCodeBlock(view, docLine.from) ||
+                shouldSkipMarkdownTableLine(line, view, docLine.from) ||
+                isLineHorizontalRule(view, docLine.from)
+            ) {
                 return line;
             }
 

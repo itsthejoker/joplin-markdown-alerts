@@ -397,6 +397,47 @@ describe('createInsertInlineFormatCommand', () => {
         }
     });
 
+    test('skips horizontal rule lines during multiline full-line formatting', () => {
+        // Blank lines are required around --- so it is parsed as a horizontal rule, not a setext heading marker.
+        const harness = createEditorHarness(['Intro', '', '---', '', 'Tail'].join('\n'), { rawInput: true });
+
+        try {
+            const line1 = harness.view.state.doc.line(1);
+            const line5 = harness.view.state.doc.line(5);
+
+            harness.view.dispatch({
+                selection: EditorSelection.single(line1.from, line5.to),
+            });
+
+            const command = createInsertInlineFormatCommand(harness.view, getFormat('highlight'));
+            command();
+
+            expect(harness.getText()).toBe(['==Intro==', '', '---', '', '==Tail=='].join('\n'));
+        } finally {
+            harness.destroy();
+        }
+    });
+
+    test('skips horizontal rule lines (asterisk variant) during multiline full-line formatting', () => {
+        const harness = createEditorHarness(['Intro', '', '***', '', 'Tail'].join('\n'), { rawInput: true });
+
+        try {
+            const line1 = harness.view.state.doc.line(1);
+            const line5 = harness.view.state.doc.line(5);
+
+            harness.view.dispatch({
+                selection: EditorSelection.single(line1.from, line5.to),
+            });
+
+            const command = createInsertInlineFormatCommand(harness.view, getFormat('highlight'));
+            command();
+
+            expect(harness.getText()).toBe(['==Intro==', '', '***', '', '==Tail=='].join('\n'));
+        } finally {
+            harness.destroy();
+        }
+    });
+
     test('preserves heading and blockquote markers in a full-line mixed selection', () => {
         const harness = createEditorHarness(
             [
