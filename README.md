@@ -113,7 +113,11 @@ Default shortcuts:
 
 ### Command behavior:
 
-- Empty selection: insert the delimiter pair and place the cursor between them
+- No active selection: insert the delimiter pair and place the cursor between them
+    - If cursor is inside (or adjacent to) existing markdown formatted text:
+        - cursor immediately before opening formatting tokens: move cursor inside
+        - cursor immediately before ending formatting tokens: move cursor after
+        - cursor otherwise inside formatting: remove formatting and select text
 - Selected text already fully wrapped in the target format: remove the outer formatting
 - Selection contains one or more inner spans already using the target format: remove only that target formatting
 - Selection contains no target formatting: wrap the selection
