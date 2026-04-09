@@ -27,6 +27,16 @@ Supported alert types:
 - `IMPORTANT`
 - `WARNING`
 - `CAUTION`
+- `ABSTRACT`
+- `INFO`
+- `TODO`
+- `SUCCESS`
+- `QUESTION`
+- `FAILURE`
+- `DANGER`
+- `BUG`
+- `EXAMPLE`
+- `QUOTE`
 
 Example:
 
@@ -46,7 +56,7 @@ Example:
 > [!CAUTION]
 > Advises about risks or negative outcomes of certain actions.
 
-> [!NOTE] Custom title
+> [!QUESTION] What if you could use a custom title?
 > This alert uses a custom title
 ```
 
