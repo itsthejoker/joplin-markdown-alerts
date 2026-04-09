@@ -27,7 +27,7 @@ export const ALERT_COLORS: ThemeColors = {
         success: { color: '#00A344', bg: 'rgba(0, 163, 68, 0.08)' },
         question: { color: '#55BD14', bg: 'rgba(85, 189, 20, 0.08)' },
         failure: { color: '#FF2E2E', bg: 'rgba(255, 0, 51, 0.08)' },
-        danger: { color: '#D1002A', bg: 'rgba(209, 0, 42, 0.08)' },
+        danger: { color: '#D1002A', bg: 'rgba(68, 138, 255, 0.08)' },
         bug: { color: '#D10049', bg: 'rgba(209, 0, 73, 0.08)' },
         example: { color: '#5100FF', bg: 'rgba(81, 0, 255, 0.08)' },
         quote: { color: '#808080', bg: 'rgba(128, 128, 128, 0.08)' },
