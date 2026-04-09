@@ -14,7 +14,8 @@
     "screenshots": [
         { "src": "images/screenshot1.png", "label": "markdown alerts example 1" },
         { "src": "images/screenshot2.png", "label": "markdown alerts example 2" },
-        { "src": "images/screenshot3.png", "label": "markdown alerts example 3" }
+        { "src": "images/screenshot3.png", "label": "markdown alerts example 3" },
+        { "src": "images/screenshot4.png", "label": "markdown alerts example 4" }
     ],
     "icons": {},
     "promo_tile": {

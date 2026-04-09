@@ -60,6 +60,8 @@ Example:
 > This alert uses a custom title
 ```
 
+![The full list of rendered alerts in light mode.](./images/screenshot4.png)
+
 ## 2. Markdown Editor Commands For Block Structures
 
 The plugin adds toolbar buttons and Edit menu commands for:
